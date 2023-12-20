@@ -64,6 +64,10 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
+# We need node in development (ideally this should be excluded from production build, though)
+ENV PATH=/usr/local/node/bin:$PATH
+COPY --from=build /usr/local/node /usr/local/node
+
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
