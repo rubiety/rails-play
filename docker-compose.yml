@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      args:
+        - BUNDLE_WITHOUT=
+        - RAILS_ENV=development
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/rails
+    environment:
+      - RAILS_ENV=development
+      - BUNDLE_WITHOUT=
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+    depends_on:
+      - db
+    entrypoint: ./bin/docker-dev-entrypoint
+    command: ./bin/rails server -b 0.0.0.0
+  db:
+    image: postgres
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres

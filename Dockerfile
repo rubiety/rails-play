@@ -7,12 +7,14 @@ FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 # Rails app lives here
 WORKDIR /rails
 
-# Set production environment
-ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+# Set environment
+ARG RAILS_ENV=production
+ENV RAILS_ENV ${RAILS_ENV}
 
+ARG BUNDLE_WITHOUT=development:test
+ENV BUNDLE_WITHOUT ${BUNDLE_WITHOUT}
+
+ENV BUNDLE_PATH="/usr/local/bundle"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -31,13 +33,13 @@ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz
     rm -rf /tmp/node-build-master
 
 # Install application gems
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock* ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-COPY package.json yarn.lock ./
+COPY package.json* yarn.lock* ./
 RUN yarn install --frozen-lockfile
 
 # Copy application code
@@ -47,7 +49,7 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN if [ "${RAILS_ENV}" = "production" ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
 
 
 # Final stage for app image

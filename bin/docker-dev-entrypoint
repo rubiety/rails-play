@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+# Wait for database to be fully available
+./bin/wait-for-tcp db 5432
+
+# If running the rails server then create or migrate existing database
+if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"
