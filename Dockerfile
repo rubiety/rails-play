@@ -68,11 +68,6 @@ COPY --from=build /rails /rails
 ENV PATH=/usr/local/node/bin:$PATH
 COPY --from=build /usr/local/node /usr/local/node
 
-# Run and own only the runtime files as a non-root user for security
-RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER rails:rails
-
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
