@@ -19,6 +19,7 @@ services:
       - db
     entrypoint: ./bin/docker-dev-entrypoint
     command: ./bin/dev
+    tty: true
   db:
     image: postgres
     volumes:
