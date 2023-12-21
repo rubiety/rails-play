@@ -20,6 +20,7 @@ services:
     entrypoint: ./bin/docker-dev-entrypoint
     command: ./bin/dev
     tty: true
+    stdin_open: true
   db:
     image: postgres
     volumes:
