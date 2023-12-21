@@ -39,8 +39,9 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-COPY package.json* yarn.lock* ./
-RUN yarn install --frozen-lockfile
+# Disabling this until we have jsbundling & cssbundling worked out...
+# COPY package.json* yarn.lock* ./
+# RUN yarn install --frozen-lockfile
 
 # Copy application code
 COPY . .
