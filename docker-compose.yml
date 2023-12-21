@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     entrypoint: ./bin/docker-dev-entrypoint
-    command: ./bin/rails server -b 0.0.0.0
+    command: ./bin/dev
   db:
     image: postgres
     volumes:

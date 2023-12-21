@@ -39,9 +39,8 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-# Disabling this until we have jsbundling & cssbundling worked out...
-# COPY package.json* yarn.lock* ./
-# RUN yarn install --frozen-lockfile
+COPY package.json* yarn.lock* ./
+RUN yarn install --frozen-lockfile
 
 # Copy application code
 COPY . .
@@ -50,8 +49,7 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-# Disabling this until we have jsbundling & cssbundling worked out...
-# RUN if [ "${RAILS_ENV}" = "production" ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
+RUN if [ "${RAILS_ENV}" = "production" ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
 
 
 # Final stage for app image
